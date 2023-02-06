@@ -30,6 +30,14 @@
         </div>
         <div class="spacer flex-grow-1"></div>
         <div class="group text-right">
+            <div class="group-top">Desk Graphics</div>
+            <div class="group-bottom">
+                <div class="fake-btn-group">
+                    <DeskModal :broadcast="broadcast" />
+                </div>
+            </div>
+        </div>
+        <div class="group text-right">
             <div class="group-top">Break Display</div>
             <div class="group-bottom">
                 <div class="fake-btn-group">
@@ -61,6 +69,7 @@ import {
 } from "@/utils/dashboard";
 import ObserverSettingsModal from "@/components/website/dashboard/ObserverSettingsModal.vue";
 import BreakDisplayMultiModal from "@/components/website/dashboard/BreakDisplayMultiModal.vue";
+import DeskModal from "./DeskModal.vue";
 
 export default {
     name: "BroadcastEditor",
@@ -70,6 +79,7 @@ export default {
         broadcastUpdateTimeout: null
     }),
     components: {
+        DeskModal,
         BreakDisplayMultiModal,
         ObserverSettingsModal,
         BFormCheckbox,

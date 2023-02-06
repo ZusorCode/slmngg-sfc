@@ -3,22 +3,26 @@
         <div :key="autoKey" class="map-display d-flex w-100 h-100" :style="{'--total-maps': maps && maps.length }" :class="{'show-next-map': showNextMap && nextMap}">
             <MapSegment class="map" :class="{ 'map-dummy' : map.dummy }" v-for="map in maps" :key="map.id"
                 :map="map" :show-map-video="showMapVideos" :broadcast="broadcast" :first-to="match && match.first_to" :use-shorter-names="useShorterMapNames"></MapSegment>
+            <MapDummy class="map" :class="{ 'map-dummy' : map.dummy }" v-for="map in dummyMaps" :key="map" :mode="map"></MapDummy>
+
         </div>
     </transition>
     <div v-else class="map-display d-flex w-100 h-100" :style="{'--total-maps': maps && maps.length }" :class="{'show-next-map': showNextMap && nextMap}">
         <MapSegment class="map" :class="{ 'map-dummy' : map.dummy }" v-for="map in maps" :key="map.id"
                     :map="map" :show-map-video="showMapVideos" :broadcast="broadcast" :first-to="match && match.first_to" :use-shorter-names="useShorterMapNames"></MapSegment>
+        <MapDummy class="map" :class="{ 'map-dummy' : map.dummy }" v-for="map in dummyMaps" :key="map" :mode="map"></MapDummy>
     </div>
 </template>
 
 <script>
 import MapSegment from "@/components/broadcast/MapSegment";
+import MapDummy from "@/components/broadcast/MapDummy";
 import { ReactiveArray, ReactiveRoot, ReactiveThing } from "@/utils/reactive";
 import { DefaultMapImages, likelyNeededMaps } from "@/utils/content-utils";
 
 export default {
     name: "MapDisplay",
-    components: { MapSegment },
+    components: { MapSegment, MapDummy },
     props: ["broadcast", "animationActive", "useTransitions", "noMapVideos"],
     data: () => ({
         activeAudio: null,
@@ -87,13 +91,26 @@ export default {
 
             if (!this.match?.first_to) return maps;
 
+            // if (dummyMapCount > 0) {
+            //     for (let i = 0; i < dummyMapCount; i++) {
+            //         const num = initialMapCount + i;
+            //         if (this.mapTypes[num]) maps.push({ dummy: true, ...(this.mapTypes ? { name: this.mapTypes && this.mapTypes[num], image: [{ url: DefaultMapImages[this.mapTypes[num]] }] } : {}) });
+            //     }
+            // }
+            return maps;
+        },
+        dummyMaps() {
+            const dummyMapCount = this.likelyNeededMaps - this.maps.length;
+            const initialMapCount = this.maps.length;
+
+            const dummyMaps = [];
             if (dummyMapCount > 0) {
                 for (let i = 0; i < dummyMapCount; i++) {
                     const num = initialMapCount + i;
-                    if (this.mapTypes[num]) maps.push({ dummy: true, ...(this.mapTypes ? { name: this.mapTypes && this.mapTypes[num], image: [{ url: DefaultMapImages[this.mapTypes[num]] }] } : {}) });
+                    if (this.mapTypes[num]) dummyMaps.push(this.mapTypes ? this.mapTypes[num] : "Map");
                 }
             }
-            return maps;
+            return dummyMaps;
         },
         likelyNeededMaps() {
             return likelyNeededMaps(this.match);
